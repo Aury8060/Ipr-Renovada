@@ -1,0 +1,79 @@
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { background-color: #f0f2f5; color: #333; }
+.view { display: none; padding: 20px; }
+.view.active { display: block; }
+
+/* Utilitarios */
+.flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+.btn-auto { width: auto !important; margin: 0 !important; }
+
+/* Login */
+.login-container { max-width: 400px; margin: 80px auto; background: #fff; padding: 40px 30px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); text-align: center; }
+.logo { max-width: 180px; margin-bottom: 25px; border-radius: 8px; object-fit: contain; }
+input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; }
+button { width: 100%; padding: 12px; background: #2c3e50; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; margin-top: 10px; font-weight: 600; transition: 0.3s; }
+button:hover { background: #1a252f; }
+a { color: #3498db; text-decoration: none; font-size: 14px; display: inline-block; margin-top: 15px; }
+
+/* Cabecalho Universal */
+header { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin: 20px 20px 0 20px; border-radius: 8px; flex-wrap: wrap; gap: 15px; }
+.header-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: flex-end; }
+.header-actions button, .user-nav-tabs button { width: auto !important; margin: 0; white-space: nowrap; padding: 8px 15px !important; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; }
+
+/* Grupos de abas do User */
+.user-nav-tabs { display: flex; gap: 5px; background: #ecf0f1; padding: 5px; border-radius: 8px; flex-wrap: wrap; }
+
+.btn-sair { background: #e74c3c; } .btn-sair:hover { background: #c0392b; }
+.btn-secundario { background: #34495e; }
+.btn-alerta { background: #f39c12; } .btn-alerta:hover { background: #d68910; }
+.btn-dash { background: #8e44ad; } .btn-dash:hover { background: #732d91; }
+.btn-salvar { background: #27ae60; } .btn-salvar:hover { background: #219150; }
+.btn-cancelar { background: #95a5a6; }
+
+.container { max-width: 1100px; margin: 0 auto; }
+
+/* Cards Genéricos */
+.cards-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.programacao-card { background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid #3498db; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+.programacao-card h4 { color: #2c3e50; font-size: 18px; margin-bottom: 10px; }
+
+/* AJUSTE DAS IMAGENS: Fit perfeito no quadro com fundo para compensar tamanhos */
+.card-img { 
+    width: 100%; 
+    height: 160px; 
+    object-fit: contain; /* Ajusta a imagem inteira no espaço, sem cortar */
+    background-color: #f8f9fa; /* Fundo suave se a imagem for menor/estreita */
+    border-radius: 6px; 
+    margin-bottom: 15px; 
+    border: 1px solid #ecf0f1; 
+}
+.lista-detalhes { margin: 15px 0; padding-left: 20px; font-size: 14px; color: #555; }
+.lista-detalhes li { margin-bottom: 5px; }
+
+/* Badges e Etiquetas */
+.badge-verde { background: #27ae60; color: #fff; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold;}
+.badge-destaque { position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 2; animation: pulse 2s infinite; }
+.badge-termina { background: #f39c12; }
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+/* Formulário de Detalhes Dinâmicos */
+.detalhe-item { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+.detalhe-item input { margin: 0; flex: 1; }
+.btn-remove-detalhe { width: 40px !important; margin: 0 !important; background: #e74c3c; padding: 10px !important; }
+
+/* Admin Dashboard & Tabelas */
+.dash-cards { display: flex; gap: 20px; flex-wrap: wrap; }
+.card { flex: 1; min-width: 200px; background: #fff; padding: 25px; border-radius: 10px; text-align: center; border-bottom: 4px solid #2c3e50; }
+.admin-section { background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow-x: auto; }
+.tabela-admin { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 600px; }
+.tabela-admin th, .tabela-admin td { padding: 12px; text-align: left; border-bottom: 1px solid #ecf0f1; vertical-align: middle; }
+.tabela-admin th { background: #f8f9fa; color: #2c3e50; font-weight: 600; }
+.btn-small { width: auto !important; padding: 6px 12px !important; font-size: 13px; margin: 2px !important; display: inline-block;}
+.linha-sucesso { background-color: #d4edda !important; }
+
+/* Modais */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; overflow-y: auto; padding: 20px; }
+.modal-content { background: #fff; padding: 30px; border-radius: 10px; width: 100%; max-width: 450px; margin: auto; }
+.contador-acompanhantes { display: flex; align-items: center; gap: 10px; margin: 10px 0 20px 0; }
+.contador-acompanhantes button { width: 45px; padding: 10px; background: #ecf0f1; color: #333; margin: 0 !important; }
+.contador-acompanhantes input { width: 70px; text-align: center; margin: 0; font-weight: bold; }

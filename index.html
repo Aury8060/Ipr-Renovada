@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Agendamento</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- TELA DE LOGIN -->
+    <section id="login-view" class="view active">
+        <div class="login-container">
+            <img src="Logo.png" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/150?text=Sua+Logo'">
+            <h2 id="titulo-login">Entrar no Sistema</h2>
+            <div id="form-login">
+                <input type="text" id="username" placeholder="Usuário">
+                <input type="password" id="password" placeholder="Senha">
+                <button onclick="window.fazerLogin()">Entrar</button>
+                <p><a href="#" onclick="window.toggleCadastro()">Não tem conta? Cadastre-se</a></p>
+            </div>
+            <div id="form-cadastro" style="display: none;">
+                <input type="text" id="new-username" placeholder="Escolha um Usuário">
+                <input type="password" id="new-password" placeholder="Crie uma Senha">
+                <button onclick="window.fazerCadastro()">Criar Conta</button>
+                <p><a href="#" onclick="window.toggleCadastro()">Já tem conta? Faça Login</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TELA DO USUÁRIO (HEADER E NAVEGAÇÃO) -->
+    <header id="user-header" style="display: none;">
+        <h2>Olá, <span id="nome-usuario"></span></h2>
+        <div class="header-actions">
+            <div class="user-nav-tabs">
+                <button onclick="window.showView('user-view')" class="btn-secundario">⏰ Agendar</button>
+                <button onclick="window.showView('user-semanal-view')" class="btn-secundario">📅 Prog. Semanal</button>
+                <button onclick="window.showView('user-especiais-view')" class="btn-secundario">⭐ Especiais</button>
+            </div>
+            <button id="btn-voltar-admin" onclick="window.irParaAdmin()" style="display: none;" class="btn-alerta">⚙️ Painel Admin</button>
+            <button onclick="window.sair()" class="btn-sair">Sair</button>
+        </div>
+    </header>
+
+    <!-- VIEWS DO USUÁRIO -->
+    <section id="user-view" class="view">
+        <div class="container">
+            <h3>Horários para Agendamento</h3>
+            <p id="msg-meu-agendamento" class="aviso-agendamento"></p>
+            <div id="lista-programacoes" class="cards-container"></div>
+        </div>
+    </section>
+
+    <section id="user-semanal-view" class="view">
+        <div class="container">
+            <h3>Programação da Semana</h3>
+            <div id="lista-semanal-user" class="cards-container"></div>
+        </div>
+    </section>
+
+    <section id="user-especiais-view" class="view">
+        <div class="container">
+            <h3>Eventos e Programações Especiais</h3>
+            <div id="lista-especiais-user" class="cards-container"></div>
+        </div>
+    </section>
+
+
+    <!-- TELA DO ADMIN (HEADER) -->
+    <header id="admin-header" style="display: none;">
+        <h2>Administração <span id="admin-badge"></span></h2>
+        <div class="header-actions admin-nav-buttons">
+            <!-- Injetado via JS -->
+        </div>
+    </header>
+
+    <!-- VIEWS DO ADMIN -->
+    <section id="admin-view" class="view">
+        <div class="container dashboard">
+            <div class="admin-section">
+                <div class="flex-between">
+                    <h3>Gerenciar Agendamentos (Vagas)</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="window.abrirModalNovaProg()" class="btn-salvar btn-auto">+ 1 Horário</button>
+                        <button onclick="window.abrirModal24h()" class="btn-secundario btn-auto">⏱️ Gerar 24 Horas</button>
+                        <button onclick="window.limparTudo()" class="btn-sair btn-auto">🗑️ Limpar Tudo</button>
+                    </div>
+                </div>
+                <table class="tabela-admin">
+                    <thead><tr><th>Título</th><th>Data</th><th>Horário</th><th>Vagas</th><th>Ocupadas</th><th>Ação</th></tr></thead>
+                    <tbody id="tabela-programacoes-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard-view" class="view">
+        <div class="container">
+            <div class="dash-cards" style="margin-bottom: 20px;">
+                <div class="card"><h4>Total de Confirmados (Geral)</h4><p id="dash-total">0</p></div>
+                <div class="card"><h4>Horários Totalmente Vazios</h4><p id="dash-vazios">0</p></div>
+            </div>
+            <div class="admin-section" style="margin-bottom: 20px;">
+                <h3>Ocupação por Horário</h3>
+                <div style="position: relative; height: 350px; width: 100%; margin-top: 15px;"><canvas id="graficoOcupacao"></canvas></div>
+            </div>
+            <div class="admin-section">
+                <h3>Detalhes por Horário</h3>
+                <table class="tabela-admin">
+                    <thead><tr><th>Programação</th><th>Data / Hora</th><th>Ocupação</th><th>Ação</th></tr></thead>
+                    <tbody id="tabela-dashboard-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- USUÁRIOS -->
+    <section id="users-view" class="view">
+        <div class="container">
+            <div class="admin-section">
+                <div class="flex-between">
+                    <h3>Lista de Usuários</h3>
+                    <button onclick="window.abrirModalUsuario()" class="btn-salvar btn-auto">+ Novo Usuário</button>
+                </div>
+                <table class="tabela-admin">
+                    <thead><tr><th>Usuário</th><th>Senha</th><th>Nível</th><th>Ações</th></tr></thead>
+                    <tbody id="tabela-usuarios-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROGRAMAÇÃO SEMANAL ADMIN -->
+    <section id="admin-semanal-view" class="view">
+        <div class="container dashboard">
+            <div class="admin-section">
+                <div class="flex-between">
+                    <h3>Gerenciar Programação Semanal</h3>
+                    <button onclick="window.abrirModalSemanal()" class="btn-salvar btn-auto">+ Adicionar Dia</button>
+                </div>
+                <table class="tabela-admin">
+                    <thead><tr><th>Dia da Semana</th><th>Horário</th><th>Imagem</th><th>Qtd. Detalhes</th><th>Ação</th></tr></thead>
+                    <tbody id="tabela-semanal-admin"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROGRAMAÇÕES ESPECIAIS ADMIN -->
+    <section id="admin-especiais-view" class="view">
+        <div class="container dashboard">
+            <div class="admin-section">
+                <div class="flex-between">
+                    <h3>Gerenciar Eventos Especiais</h3>
+                    <button onclick="window.abrirModalEspecial()" class="btn-salvar btn-auto">+ Novo Evento Especial</button>
+                </div>
+                <table class="tabela-admin">
+                    <thead><tr><th>Título</th><th>Início</th><th>Fim</th><th>Horário</th><th>Status</th><th>Ação</th></tr></thead>
+                    <tbody id="tabela-especiais-admin"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAIS DO SISTEMA -->
+
+    <!-- Modal Agendamento (Usuário) -->
+    <div id="modal-agendamento" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-titulo">Confirmar Presença</h3>
+            <p>Dia: <strong id="modal-dia"></strong> | Horário: <strong id="modal-horario"></strong></p>
+            <p>Vagas restantes: <strong id="vagas-restantes" style="color: #27ae60;"></strong></p>
+            <div style="margin-top: 15px;">
+                <label>Deseja adicionar acompanhantes?</label>
+                <div class="contador-acompanhantes">
+                    <button onclick="window.alterarAcompanhantes(-1)">-</button>
+                    <input type="number" id="qtd-acompanhantes" value="0" min="0" readonly>
+                    <button onclick="window.alterarAcompanhantes(1)">+</button>
+                </div>
+                <div id="nomes-acompanhantes"></div>
+            </div>
+            <button onclick="window.salvarAgendamento()" class="btn-salvar" style="margin-top: 15px;">Confirmar</button>
+            <button onclick="window.fecharModal('modal-agendamento')" class="btn-cancelar">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="modal-ver-pessoas" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <h3>Lista de Presença</h3>
+            <p id="pessoas-titulo" style="margin-bottom: 15px; color: #3498db; font-weight: bold;"></p>
+            <table class="tabela-admin">
+                <thead><tr><th>Usuário (Titular)</th><th>Acompanhantes</th><th>Qtd Total</th></tr></thead>
+                <tbody id="lista-pessoas-body"></tbody>
+            </table>
+            <button onclick="window.fecharModal('modal-ver-pessoas')" class="btn-cancelar" style="margin-top: 20px;">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Modais de Agendas Fixas (1 Horário / 24h) -->
+    <div id="modal-nova-prog" class="modal">
+        <div class="modal-content">
+            <h3>Criar Horário de Agendamento</h3>
+            <input type="text" id="prog-titulo" placeholder="Título">
+            <input type="date" id="prog-data">
+            <input type="time" id="prog-hora">
+            <input type="number" id="prog-vagas" placeholder="Total de Vagas">
+            <button onclick="window.salvarNovaProg()" class="btn-salvar">Salvar Horário</button>
+            <button onclick="window.fecharModal('modal-nova-prog')" class="btn-cancelar">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="modal-24h" class="modal">
+        <div class="modal-content">
+            <h3>Gerar Relógio 24 Horas</h3>
+            <input type="text" id="prog24-titulo" value="Relógio de Oração">
+            <label>Inicia no dia:</label><input type="date" id="prog24-data">
+            <label>Inicia às:</label><input type="time" id="prog24-hora" value="00:00">
+            <label>Vagas disponíveis por hora:</label><input type="number" id="prog24-vagas" placeholder="Ex: 5">
+            <button onclick="window.gerarRelogio24h()" class="btn-salvar">Gerar 24 Horas</button>
+            <button onclick="window.fecharModal('modal-24h')" class="btn-cancelar">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="modal-usuario" class="modal">
+        <div class="modal-content">
+            <h3 id="titulo-modal-user">Novo Usuário</h3>
+            <input type="hidden" id="user-key-edit">
+            <input type="text" id="user-nome" placeholder="Nome de usuário">
+            <input type="text" id="user-senha" placeholder="Senha">
+            <label>Nível de Acesso:</label>
+            <select id="user-role" onchange="window.toggleUserPerms()">
+                <option value="user">Usuário Comum</option>
+                <option value="admin">Administrador</option>
+            </select>
+            <div id="user-perms-div" style="display: none; background: #f8f9fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                <label style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="user-perm-manage" style="width: auto; margin:0;"> Permitir Gestão de Usuários?
+                </label>
+            </div>
+            <button onclick="window.salvarUsuarioAdmin()" class="btn-salvar">Salvar Usuário</button>
+            <button onclick="window.fecharModal('modal-usuario')" class="btn-cancelar">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL PROGRAMAÇÃO SEMANAL -->
+    <div id="modal-semanal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <h3>Adicionar Prog. Semanal</h3>
+            <select id="sem-dia">
+                <option value="Segunda-feira">Segunda-feira</option>
+                <option value="Terça-feira">Terça-feira</option>
+                <option value="Quarta-feira">Quarta-feira</option>
+                <option value="Quinta-feira">Quinta-feira</option>
+                <option value="Sexta-feira">Sexta-feira</option>
+                <option value="Sábado">Sábado</option>
+                <option value="Domingo">Domingo</option>
+            </select>
+            <input type="time" id="sem-hora" placeholder="Horário">
+            
+            <label>Imagem (Opcional):</label>
+            <select id="sem-tipo-img" onchange="window.mudarTipoImg('sem')">
+                <option value="none">Sem Imagem</option>
+                <option value="url">Link da Web (URL)</option>
+                <option value="local">Upload do Dispositivo</option>
+            </select>
+            <input type="text" id="sem-img-url" placeholder="Cole o link da imagem aqui..." style="display:none;">
+            <input type="file" id="sem-img-local" accept="image/*" style="display:none;" onchange="window.converterBase64(this, 'sem')">
+            <input type="hidden" id="sem-img-base64">
+
+            <label style="margin-top: 15px;">Detalhes da Programação:</label>
+            <div id="sem-detalhes-container"></div>
+            <button onclick="window.adicionarDetalhe('sem')" class="btn-secundario" style="margin-bottom:15px;">+ Adicionar Detalhe</button>
+            
+            <button onclick="window.salvarProgSemanal()" class="btn-salvar">Salvar</button>
+            <button onclick="window.fecharModal('modal-semanal')" class="btn-cancelar">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- MODAL PROGRAMAÇÃO ESPECIAL -->
+    <div id="modal-especial" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <h3>Novo Evento Especial</h3>
+            <input type="text" id="esp-titulo" placeholder="Nome do Evento">
+            
+            <div style="display:flex; gap:10px;">
+                <div style="flex:1;"><label>Data Início:</label><input type="date" id="esp-data-inicio"></div>
+                <div style="flex:1;"><label>Data Fim:</label><input type="date" id="esp-data-fim"></div>
+            </div>
+            <label>Horário (Padrão):</label>
+            <input type="time" id="esp-hora">
+            
+            <label>Imagem (Opcional):</label>
+            <select id="esp-tipo-img" onchange="window.mudarTipoImg('esp')">
+                <option value="none">Sem Imagem</option>
+                <option value="url">Link da Web (URL)</option>
+                <option value="local">Upload do Dispositivo</option>
+            </select>
+            <input type="text" id="esp-img-url" placeholder="Cole o link da imagem aqui..." style="display:none;">
+            <input type="file" id="esp-img-local" accept="image/*" style="display:none;" onchange="window.converterBase64(this, 'esp')">
+            <input type="hidden" id="esp-img-base64">
+
+            <label style="margin-top: 15px;">Detalhes do Evento:</label>
+            <div id="esp-detalhes-container"></div>
+            <button onclick="window.adicionarDetalhe('esp')" class="btn-secundario" style="margin-bottom:15px;">+ Adicionar Detalhe</button>
+            
+            <button onclick="window.salvarProgEspecial()" class="btn-salvar">Salvar Evento</button>
+            <button onclick="window.fecharModal('modal-especial')" class="btn-cancelar">Cancelar</button>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
