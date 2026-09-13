@@ -12,7 +12,9 @@
     <!-- TELA DE LOGIN -->
     <section id="login-view" class="view active">
         <div class="login-container">
-            <img src="Logo.png" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/150?text=Sua+Logo'">
+            <!-- CORREÇÃO DA LOGO: onerror removido para evitar loop infinito -->
+            <img src="Logo.png" alt="Logo do Sistema" class="logo">
+            
             <h2 id="titulo-login">Entrar no Sistema</h2>
             <div id="form-login">
                 <input type="text" id="username" placeholder="Usuário">
